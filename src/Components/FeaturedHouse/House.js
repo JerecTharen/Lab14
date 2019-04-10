@@ -1,15 +1,28 @@
 import React from 'react';
 import './House.css';
+import Inquiry from './Inquiry';
+import emailIcon from './Email.png';
 
 class House extends React.Component{
 
     state = {
+        inquiryShown: false,
+    };
 
+    inquiryToggle = ()=>{
+        this.setState({inquiryShown: !this.state.inquiryShown});
     };
 
     house = this.props.house;
 
     render() {
+        let showForm;
+        if(this.state.inquiryShown){
+            showForm = <Inquiry />
+        }
+        else{
+            showForm = null;
+        }
         return(
             <div>
                 <div className='row mt-2'>
@@ -25,6 +38,8 @@ class House extends React.Component{
                     <div className='col-md-5'>
                         <p className='price'>{this.house.price}</p>
                         <p>{this.house.description}</p>
+                        <img id='emailIcon' src={emailIcon} alt='emailIcon' onClick={this.inquiryToggle} />
+                        {showForm}
                     </div>
                 </div>
             </div>

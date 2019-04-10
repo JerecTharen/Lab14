@@ -5,6 +5,8 @@ import './App.css';
 import Header from './Components/Header/Header';
 import FeaturedHouse from './Components/FeaturedHouse/FeaturedHouse';
 import HouseSearch from './Components/HouseSearch/HouseSearch';
+import SearchTable from './Components/HouseSearch/SearchTable';
+import House from './Components/FeaturedHouse/House';
 
 class App extends Component {
 
@@ -41,13 +43,36 @@ class App extends Component {
         this.fetchHouses();
     }
 
+    filterHouses = (country)=>{
+        this.setState({activeHouse: null});
+        const filterHouses = this.allHouses.filter((h)=> h.country === country);
+        this.setState({filterHouses});
+        this.setState({country});
+    };
+
+    setActiveHouse = (house)=>{
+        this.setState({activeHouse: house});
+    };
+
 
     render() {
+        let activeComponent = null;
+        if(this.state.country){
+            // console.log(this.state.filteredHouses);
+            activeComponent = <SearchTable country={this.state.country}
+                filteredHouses={this.state.filterHouses} setActiveHouse={this.setActiveHouse} />;
+        }
+        if(this.state.activeHouse){
+            activeComponent = <House h ouse={this.state.activeHouse} />;
+        }
+        if(!activeComponent){
+            activeComponent = <FeaturedHouse house={this.state.featuredHouse} />;
+        }
     return (
       <div className="container">
         <Header subtitle='Providing houses all over the world' />
-        <HouseSearch countries={this.state.countries} />
-        <FeaturedHouse house={this.state.featuredHouse} />
+        <HouseSearch countries={this.state.countries} filterHouses={this.filterHouses} />
+        {activeComponent}
       </div>
     );
   }
