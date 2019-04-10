@@ -1,25 +1,53 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+//component imports
+import Header from './Components/Header/Header';
+import FeaturedHouse from './Components/FeaturedHouse/FeaturedHouse';
+import HouseSearch from './Components/HouseSearch/HouseSearch';
+
 class App extends Component {
-  render() {
+
+    state = {
+    };
+
+    fetchHouses = ()=>{
+        fetch('/houses.json')
+            .then(resp => resp.json())
+            .then(allHouses =>{
+                this.allHouses = allHouses;
+                this.determineFeaturedHouse();
+                this.determineUniqueContries();
+            })
+    };
+
+    determineFeaturedHouse = ()=>{
+        if(this.allHouses){
+            const randomIndex = Math.floor(Math.random()* this.allHouses.length);
+            const featuredHouse = this.allHouses[randomIndex];
+            this.setState({featuredHouse});
+        }
+    };
+
+    determineUniqueContries = ()=>{
+        const countries = this.allHouses
+            ? Array.from(new Set(this.allHouses.map(h => h.country)))
+            : [];
+        countries.unshift(null);
+        this.setState({countries});
+    };
+
+    componentDidMount(){
+        this.fetchHouses();
+    }
+
+
+    render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="container">
+        <Header subtitle='Providing houses all over the world' />
+        <HouseSearch countries={this.state.countries} />
+        <FeaturedHouse house={this.state.featuredHouse} />
       </div>
     );
   }
